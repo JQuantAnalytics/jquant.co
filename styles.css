@@ -781,6 +781,17 @@ a {
   color: var(--text-dim);
 }
 
+.footer-domain {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  transition: color 0.3s;
+}
+
+.footer-domain:hover {
+  color: var(--accent);
+}
+
 /* --- Animations --- */
 [data-animate] {
   opacity: 0;
