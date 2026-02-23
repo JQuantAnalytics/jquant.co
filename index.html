@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,7 @@
   <meta property="og:url" content="https://jquant.co">
   <meta property="og:title" content="Jason T. Arnold | Crypto & Digital Assets Strategist">
   <meta property="og:description" content="8+ years building and scaling top-tier blockchain ecosystems. $70B+ peak market cap. $20B+ TVL. 100+ projects recruited.">
+  <meta property="og:image" content="https://jquant.co/profile.jpg">
   <meta property="og:site_name" content="jquant.co">
 
   <!-- Twitter Card -->
@@ -22,6 +23,7 @@
   <meta name="twitter:creator" content="@jquant_">
   <meta name="twitter:title" content="Jason T. Arnold | Crypto & Digital Assets Strategist">
   <meta name="twitter:description" content="8+ years building and scaling top-tier blockchain ecosystems. $70B+ peak market cap. $20B+ TVL. 100+ projects recruited.">
+  <meta name="twitter:image" content="https://jquant.co/profile.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,9 +47,15 @@
         <a href="#highlights">Impact</a>
         <a href="#contact">Contact</a>
       </div>
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+          <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </nav>
 
@@ -61,16 +69,19 @@
 
   <!-- Hero Section -->
   <section class="hero" id="hero">
-    <div class="hero-grid-bg"></div>
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-glow hero-glow-1"></div>
     <div class="hero-glow hero-glow-2"></div>
     <div class="hero-glow hero-glow-3"></div>
     <div class="hero-content">
-      <div class="hero-badge" data-animate="fade-up">
-        <span class="badge-dot"></span>
-        Available for strategic advisory
+      <div class="hero-profile" data-animate="fade-up">
+        <img src="profile.jpg" alt="Jason T. Arnold" class="hero-avatar" width="96" height="96">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          Available for strategic advisory
+        </div>
       </div>
-      <span class="hero-eyebrow" data-animate="fade-up" data-delay="80">Chicago, IL &nbsp;·&nbsp; Web3 &nbsp;·&nbsp; Digital Assets</span>
+      <span class="hero-eyebrow" data-animate="fade-up" data-delay="80">🇺🇸 Chicago, IL &nbsp;·&nbsp; Web3 &nbsp;·&nbsp; Digital Assets</span>
       <h1 class="hero-name" data-animate="fade-up" data-delay="150">
         Jason T.<br>Arnold
       </h1>
@@ -109,7 +120,12 @@
       <div class="section-label" data-animate="fade-up">01 / About</div>
       <div class="about-grid">
         <div class="about-text" data-animate="fade-up" data-delay="100">
-          <h2>Ecosystem strategist scaling Web3's most ambitious protocols.</h2>
+          <div class="about-profile-row">
+            <img src="profile.jpg" alt="Jason T. Arnold" class="about-avatar">
+            <div>
+              <h2>Ecosystem strategist scaling Web3's most ambitious protocols.</h2>
+            </div>
+          </div>
           <p>
             I'm a blockchain ecosystem strategist and business development specialist with 8+ years of experience driving growth for top-tier crypto protocols and digital asset ventures. From pre-launch strategy to post-TGE ecosystem expansion, I've helped build and scale projects that collectively represent over $70B in peak market capitalization.
           </p>
@@ -401,7 +417,7 @@
                   </span>
                 </div>
               </div>
-              <p class="timeline-location">Chicago, IL</p>
+              <p class="timeline-location">🇺🇸 Chicago, IL</p>
               <p class="timeline-desc">Prepared and prosecuted patent applications directed to artificial intelligence, blockchain and distributed ledger technology for Fortune 100 companies.</p>
             </button>
             <div class="timeline-details" id="exp-mbhb">
@@ -532,7 +548,7 @@
     <div class="container footer-inner">
       <span>&copy; 2026 Jason T. Arnold</span>
       <a href="https://jquant.co" class="footer-domain">jquant.co</a>
-      <span>Chicago, IL</span>
+      <span>🇺🇸 Chicago, IL</span>
     </div>
   </footer>
 
