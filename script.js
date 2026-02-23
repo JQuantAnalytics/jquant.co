@@ -122,6 +122,18 @@
     });
   }
 
+  // --- Timeline accordion ---
+  document.querySelectorAll('.timeline-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      const detailsId = btn.getAttribute('aria-controls');
+      const details = document.getElementById(detailsId);
+
+      btn.setAttribute('aria-expanded', String(!expanded));
+      details.classList.toggle('open', !expanded);
+    });
+  });
+
   // --- Active nav link highlighting ---
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
