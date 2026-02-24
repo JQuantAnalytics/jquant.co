@@ -1247,6 +1247,43 @@ body::before {
   flex-shrink: 0;
 }
 
+.timeline-company-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.timeline-company-logo svg {
+  width: 22px;
+  height: 22px;
+}
+
+.timeline-company-logo svg path,
+.timeline-company-logo svg circle,
+.timeline-company-logo svg rect {
+  fill: currentColor;
+  stroke: none;
+}
+
+.timeline-company-logo svg circle,
+.timeline-company-logo svg path[fill="none"] {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.timeline-company-logo svg path[stroke="none"] {
+  fill: currentColor;
+  stroke: none;
+}
+
 .timeline-date {
   font-family: var(--mono);
   font-size: 12px;
@@ -1382,6 +1419,106 @@ body::before {
   background: rgba(201, 169, 110, 0.18);
   border-color: rgba(201, 169, 110, 0.3);
   transform: scale(1.02);
+}
+
+/* --- Logo Ticker --- */
+.logo-ticker {
+  padding: 40px 0;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+}
+
+.logo-ticker::before,
+.logo-ticker::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logo-ticker::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+}
+
+.logo-ticker::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+}
+
+.logo-ticker-track {
+  display: flex;
+  gap: 40px;
+  animation: ticker-scroll 30s linear infinite;
+  width: max-content;
+}
+
+.logo-ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.logo-ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  flex-shrink: 0;
+  transition: all 0.3s var(--ease);
+}
+
+.logo-ticker-item:hover {
+  border-color: rgba(201, 169, 110, 0.4);
+  transform: translateY(-2px);
+}
+
+.logo-ticker-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-ticker-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.logo-ticker-icon svg path,
+.logo-ticker-icon svg circle,
+.logo-ticker-icon svg rect {
+  fill: currentColor;
+  stroke: none;
+}
+
+.logo-ticker-icon svg circle,
+.logo-ticker-icon svg path[fill="none"] {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.logo-ticker-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
 }
 
 /* --- Highlights Grid --- */
@@ -1689,9 +1826,28 @@ body::before {
 }
 
 /* --- Responsive --- */
+@media (min-width: 1400px) {
+  .hero-name {
+    white-space: nowrap;
+    line-height: 1;
+  }
+}
+
 @media (max-width: 1024px) {
   .highlights-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .logo-ticker-track {
+    gap: 24px;
+  }
+  
+  .logo-ticker-item {
+    padding: 10px 16px;
+  }
+  
+  .logo-ticker-name {
+    font-size: 13px;
   }
 }
 
@@ -1755,6 +1911,10 @@ body::before {
     flex-direction: column;
     gap: 6px;
   }
+  
+  .timeline-company-logo {
+    display: none;
+  }
 
   .timeline-header-right {
     flex-direction: row;
@@ -1775,6 +1935,27 @@ body::before {
   .contact-link {
     min-width: unset;
     width: 100%;
+  }
+  
+  .logo-ticker {
+    padding: 24px 0;
+  }
+  
+  .logo-ticker-track {
+    gap: 16px;
+  }
+  
+  .logo-ticker-item {
+    padding: 8px 12px;
+  }
+  
+  .logo-ticker-name {
+    display: none;
+  }
+  
+  .logo-ticker-icon svg {
+    width: 20px;
+    height: 20px;
   }
 
   .section-heading {
