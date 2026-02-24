@@ -1,10 +1,14 @@
 /* ============================================
    Jason T. Arnold — Landing Page Scripts
+   2026 Premium Design Update
    Animations, nav, counters, grid, theme
    ============================================ */
 
 (function () {
   'use strict';
+
+  // --- Check for reduced motion preference ---
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // --- Theme toggle ---
   const root = document.documentElement;
@@ -35,13 +39,35 @@
     });
   }
 
+  // --- Reading Progress Bar ---
+  const progressBar = document.getElementById('progressBar');
+  
+  function updateProgressBar() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    if (progressBar) {
+      progressBar.style.width = progress + '%';
+    }
+  }
+
+  window.addEventListener('scroll', updateProgressBar, { passive: true });
+  updateProgressBar();
+
   // --- Scroll-based nav styling ---
   const nav = document.getElementById('nav');
+  const hero = document.querySelector('.hero');
   let lastScroll = 0;
 
   function handleNavScroll() {
     const y = window.scrollY;
     nav.classList.toggle('scrolled', y > 50);
+    
+    // Add scrolled class to hero for neon glow effect
+    if (hero) {
+      hero.classList.toggle('scrolled', y > 100);
+    }
+    
     lastScroll = y;
   }
 
@@ -79,6 +105,43 @@
     });
   });
 
+  // --- Typewriter Effect ---
+  const typewriterEl = document.getElementById('typewriter');
+  const typewriterText = 'Building at the intersection of blockchain ecosystems, institutional strategy, and emerging digital infrastructure — from pre-launch to $70B+ market cap.';
+  
+  if (typewriterEl && !prefersReducedMotion) {
+    let charIndex = 0;
+    let isTyping = false;
+    let hasTyped = false;
+
+    function typeWriter() {
+      if (charIndex < typewriterText.length) {
+        typewriterEl.textContent += typewriterText.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeWriter, 20 + Math.random() * 20);
+      } else {
+        isTyping = false;
+      }
+    }
+
+    // Start typewriter when hero is visible
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !hasTyped) {
+          hasTyped = true;
+          setTimeout(() => {
+            isTyping = true;
+            typeWriter();
+          }, 600);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    heroObserver.observe(document.querySelector('.hero-content'));
+  } else if (typewriterEl) {
+    typewriterEl.textContent = typewriterText;
+  }
+
   // --- Intersection Observer for reveal animations ---
   const animatedElements = document.querySelectorAll('[data-animate]');
 
@@ -98,7 +161,24 @@
 
   animatedElements.forEach((el) => observer.observe(el));
 
-  // --- Animated number counters ---
+  // --- Stagger animation observer ---
+  const staggerElements = document.querySelectorAll('[data-animate-stagger]');
+  
+  const staggerObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          staggerObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.2 }
+  );
+
+  staggerElements.forEach((el) => staggerObserver.observe(el));
+
+  // --- Animated number counters with pop effect ---
   const statNumbers = document.querySelectorAll('[data-count]');
 
   const counterObserver = new IntersectionObserver(
@@ -106,6 +186,11 @@
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           animateCount(entry.target);
+          // Add pop animation to parent card
+          const card = entry.target.closest('.stat-card');
+          if (card) {
+            setTimeout(() => card.classList.add('counted'), 1500);
+          }
           counterObserver.unobserve(entry.target);
         }
       });
@@ -117,7 +202,7 @@
 
   function animateCount(el) {
     const target = parseInt(el.dataset.count, 10);
-    const duration = 1600;
+    const duration = prefersReducedMotion ? 0 : 1600;
     const start = performance.now();
 
     function easeOutExpo(t) {
@@ -132,12 +217,15 @@
       if (progress < 1) requestAnimationFrame(tick);
     }
 
-    requestAnimationFrame(tick);
+    if (prefersReducedMotion) {
+      el.textContent = target;
+    } else {
+      requestAnimationFrame(tick);
+    }
   }
 
   // --- Parallax glow on mouse move (hero only, desktop) ---
-  if (window.matchMedia('(min-width: 769px)').matches) {
-    const hero = document.querySelector('.hero');
+  if (window.matchMedia('(min-width: 769px)').matches && !prefersReducedMotion) {
     const glow1 = document.querySelector('.hero-glow-1');
     const glow2 = document.querySelector('.hero-glow-2');
 
@@ -146,8 +234,8 @@
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-      glow1.style.transform = `translate(${x * 30}px, ${y * 20}px) scale(1.05)`;
-      glow2.style.transform = `translate(${x * -20}px, ${y * -15}px) scale(1.02)`;
+      if (glow1) glow1.style.transform = `translate(${x * 30}px, ${y * 20}px) scale(1.05)`;
+      if (glow2) glow2.style.transform = `translate(${x * -20}px, ${y * -15}px) scale(1.02)`;
     });
   }
 
@@ -163,6 +251,39 @@
     });
   });
 
+  // --- Timeline line animation on scroll ---
+  const timeline = document.getElementById('timeline');
+  const timelineLine = document.getElementById('timelineLine');
+  const timelineItems = document.querySelectorAll('.timeline-item');
+
+  if (timeline && timelineLine && !prefersReducedMotion) {
+    const timelineObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const rect = timeline.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const scrollProgress = Math.min(1, Math.max(0,(viewportHeight / 2 - rect.top) / rect.height));
+            const lineHeight = scrollProgress * timeline.offsetHeight;
+            timelineLine.style.height = lineHeight + 'px';
+            
+            // Activate timeline items as line passes them
+            timelineItems.forEach((item, index) => {
+              const itemRect = item.getBoundingClientRect();
+              const itemTop = itemRect.top - rect.top + timeline.offsetTop;
+              if (lineHeight > itemTop + 20) {
+                item.classList.add('active');
+              }
+            });
+          }
+        });
+      },
+      { threshold: Array.from({ length: 100 }, (_, i) => i / 100) }
+    );
+
+    timelineObserver.observe(timeline);
+  }
+
   // --- Active nav link highlighting ---
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
@@ -176,9 +297,9 @@
 
       if (scrollY >= top && scrollY < top + height) {
         navLinks.forEach((link) => {
-          link.style.color = '';
+          link.classList.remove('active');
           if (link.getAttribute('href') === `#${id}`) {
-            link.style.color = 'var(--text)';
+            link.classList.add('active');
           }
         });
       }
@@ -186,6 +307,154 @@
   }
 
   window.addEventListener('scroll', highlightNav, { passive: true });
+
+  // --- 3D Tilt Effect on About Avatar ---
+  const aboutAvatar = document.getElementById('aboutAvatar');
+  const aboutAvatarWrapper = document.getElementById('aboutAvatarWrapper');
+
+  if (aboutAvatar && aboutAvatarWrapper &&!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+    aboutAvatarWrapper.addEventListener('mousemove', (e) => {
+      const rect = aboutAvatarWrapper.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      
+      const rotateX = y * -20;
+      const rotateY = x * 20;
+      
+      aboutAvatar.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+    });
+
+    aboutAvatarWrapper.addEventListener('mouseleave', () => {
+      aboutAvatar.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+    });
+  }
+
+  // --- Magnetic Hover Effect for Hero Badge ---
+  const heroBadge = document.getElementById('heroBadge');
+
+  if (heroBadge && !prefersReducedMotion) {
+    heroBadge.addEventListener('mousemove', (e) => {
+      const rect = heroBadge.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      
+      const moveX = x * 0.3;
+      const moveY = y * 0.3;
+      
+      heroBadge.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+    });
+
+    heroBadge.addEventListener('mouseleave', () => {
+      heroBadge.style.transform = 'translate(0, 0) scale(1)';
+    });
+  }
+
+  // --- Magnetic Effect for Buttons ---
+  function addMagneticEffect(selector) {
+    const elements = document.querySelectorAll(selector);
+    
+    elements.forEach(el => {
+      if (prefersReducedMotion) return;
+      
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        el.style.setProperty('--mouse-x', x + '%');
+        el.style.setProperty('--mouse-y', y + '%');
+        
+        const centerX = e.clientX - rect.left - rect.width / 2;
+        const centerY = e.clientY - rect.top - rect.height / 2;
+        
+        el.style.transform = `translate(${centerX * 0.1}px, ${centerY * 0.1}px) scale(1.02)`;
+      });
+
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'translate(0, 0) scale(1)';
+      });
+    });
+  }
+
+  addMagneticEffect('.btn-primary');
+  addMagneticEffect('.contact-link');
+
+  // --- Card Tilt Effect for Highlight Cards ---
+  const highlightCards = document.querySelectorAll('.highlight-card');
+
+  if (!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+    highlightCards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        
+        const rotateX = y * -8;
+        const rotateY = x * 8;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+      });
+    });
+  }
+
+  // --- Magnetic Repulsion for Skill Tags ---
+  const skillsGrid = document.getElementById('skillsGrid');
+
+  if (skillsGrid &&!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+    const skillTags = skillsGrid.querySelectorAll('.skill-tag');
+    
+    skillsGrid.addEventListener('mousemove', (e) => {
+      const gridRect = skillsGrid.getBoundingClientRect();
+      const mouseX = e.clientX - gridRect.left;
+      const mouseY = e.clientY - gridRect.top;
+      
+      skillTags.forEach(tag => {
+        const tagRect = tag.getBoundingClientRect();
+        const tagCenterX = tagRect.left + tagRect.width / 2 - gridRect.left;
+        const tagCenterY = tagRect.top + tagRect.height / 2 - gridRect.top;
+        
+        const distX = mouseX - tagCenterX;
+        const distY = mouseY - tagCenterY;
+        const dist = Math.sqrt(distX * distX + distY * distY);
+        
+        const maxDist = 100;
+        const force = Math.max(0, 1 - dist / maxDist);
+        
+        const moveX = -distX * force * 0.3;
+        const moveY = -distY * force * 0.3;
+        
+        if (dist < maxDist) {
+          tag.style.transform = `translate(${moveX}px, ${moveY}px) scale(${1 + force * 0.1})`;
+        } else {
+          tag.style.transform = 'translate(0, 0) scale(1)';
+        }
+      });
+    });
+
+    skillsGrid.addEventListener('mouseleave', () => {
+      skillTags.forEach(tag => {
+        tag.style.transform = 'translate(0, 0) scale(1)';
+      });
+    });
+  }
+
+  // --- Scroll Arrow Click ---
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  
+  if (scrollIndicator) {
+    scrollIndicator.addEventListener('click', () => {
+      const aboutSection = document.getElementById('about');
+      if (aboutSection) {
+        const offset = 80;
+        const top = aboutSection.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  }
 
   // ============================================================
   // --- Interactive Canvas Grid ---
@@ -216,8 +485,8 @@
     let heroRect;
 
     function resize() {
-      const hero = canvas.parentElement;
-      heroRect = hero.getBoundingClientRect();
+      const heroParent = canvas.parentElement;
+      heroRect = heroParent.getBoundingClientRect();
       canvas.width = heroRect.width;
       canvas.height = heroRect.height;
       buildGrid();
@@ -333,56 +602,59 @@
       };
     }
 
-    canvas.addEventListener('mousemove', (e) => {
-      const p = toCanvasCoords(e.clientX, e.clientY);
-      mouse.x = p.x;
-      mouse.y = p.y;
-    }, { passive: true });
+    // Only enable canvas interactions on desktop
+    if (!prefersReducedMotion) {
+      canvas.addEventListener('mousemove', (e) => {
+        const p = toCanvasCoords(e.clientX, e.clientY);
+        mouse.x = p.x;
+        mouse.y = p.y;
+      }, { passive: true });
 
-    canvas.addEventListener('mouseleave', () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-      isDragging = false;
-    });
+      canvas.addEventListener('mouseleave', () => {
+        mouse.x = -9999;
+        mouse.y = -9999;
+        isDragging = false;
+      });
 
-    canvas.addEventListener('mousedown', () => { isDragging = true; });
-    canvas.addEventListener('mouseup', (e) => {
-      isDragging = false;
-      const p = toCanvasCoords(e.clientX, e.clientY);
-      explosions.push({ x: p.x, y: p.y, t: performance.now() });
-    });
-
-    canvas.addEventListener('click', (e) => {
-      const p = toCanvasCoords(e.clientX, e.clientY);
-      explosions.push({ x: p.x, y: p.y, t: performance.now() });
-    });
-
-    canvas.addEventListener('touchstart', (e) => {
-      isDragging = false;
-      const t = e.touches[0];
-      const p = toCanvasCoords(t.clientX, t.clientY);
-      mouse.x = p.x;
-      mouse.y = p.y;
-    }, { passive: true });
-
-    canvas.addEventListener('touchmove', (e) => {
-      isDragging = true;
-      const t = e.touches[0];
-      const p = toCanvasCoords(t.clientX, t.clientY);
-      mouse.x = p.x;
-      mouse.y = p.y;
-    }, { passive: true });
-
-    canvas.addEventListener('touchend', (e) => {
-      isDragging = false;
-      if (e.changedTouches.length) {
-        const t = e.changedTouches[0];
-        const p = toCanvasCoords(t.clientX, t.clientY);
+      canvas.addEventListener('mousedown', () => { isDragging = true; });
+      canvas.addEventListener('mouseup', (e) => {
+        isDragging = false;
+        const p = toCanvasCoords(e.clientX, e.clientY);
         explosions.push({ x: p.x, y: p.y, t: performance.now() });
-      }
-      mouse.x = -9999;
-      mouse.y = -9999;
-    }, { passive: true });
+      });
+
+      canvas.addEventListener('click', (e) => {
+        const p = toCanvasCoords(e.clientX, e.clientY);
+        explosions.push({ x: p.x, y: p.y, t: performance.now() });
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        isDragging = false;
+        const t = e.touches[0];
+        const p = toCanvasCoords(t.clientX, t.clientY);
+        mouse.x = p.x;
+        mouse.y = p.y;
+      }, { passive: true });
+
+      canvas.addEventListener('touchmove', (e) => {
+        isDragging = true;
+        const t = e.touches[0];
+        const p = toCanvasCoords(t.clientX, t.clientY);
+        mouse.x = p.x;
+        mouse.y = p.y;
+      }, { passive: true });
+
+      canvas.addEventListener('touchend', (e) => {
+        isDragging = false;
+        if (e.changedTouches.length) {
+          const t = e.changedTouches[0];
+          const p = toCanvasCoords(t.clientX, t.clientY);
+          explosions.push({ x: p.x, y: p.y, t: performance.now() });
+        }
+        mouse.x = -9999;
+        mouse.y = -9999;
+      }, { passive: true });
+    }
 
     let resizeTimer;
     window.addEventListener('resize', () => {
@@ -393,4 +665,5 @@
     resize();
     draw();
   })();
+
 })();
