@@ -149,18 +149,19 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124, 111, 247, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(201, 169, 110, 0.06) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 60% at 90% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse 70% 50% at 10% 80%, rgba(20, 184, 166, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124, 111, 247, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(201, 169, 110, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 90% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 50% at 10% 80%, rgba(20, 184, 166, 0.03) 0%, transparent 50%);
   transition: opacity 0.4s;
-  animation: aurora-drift 30s ease-in-out infinite alternate;
+  animation: aurora-drift 40s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 @keyframes aurora-drift {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(2%, -1%) scale(1.02); }
-  100% { transform: translate(-2%, 1%) scale(0.98); }
+  50% { transform: translate(1%, -0.5%) scale(1.01); }
+  100% { transform: translate(-1%, 0.5%) scale(0.99); }
 }
 
 [data-theme="light"] body::before {
@@ -252,18 +253,19 @@ body::before {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 3px;
-  height: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
   background: var(--gradient-neon);
   border-radius: 2px;
-  transition: height 0.4s var(--spring);
+  transition: width 0.4s var(--spring), left 0.4s var(--spring);
   box-shadow: 0 0 8px var(--accent-green);
 }
 
 .nav-links a:hover::before,
 .nav-links a.active::before {
-  height: 100%;
+  width: 100%;
+  left: 0;
 }
 
 .nav-links a:hover {
@@ -403,7 +405,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 140px 24px 100px;
+  padding: 140px 24px 120px;
   overflow: hidden;
 }
 
@@ -426,17 +428,18 @@ body::before {
   z-index: 0;
   opacity: 0.6;
   background: 
-    radial-gradient(ellipse 80% 60% at 30% 20%, rgba(124, 111, 247, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 80% at 70% 80%, rgba(201, 169, 110, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0, 255, 159, 0.05) 0%, transparent 40%);
+    radial-gradient(ellipse 45% 35% at 50% 30%, rgba(124, 111, 247, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 45% at 50% 65%, rgba(201, 169, 110, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse 25% 25% at 50% 50%, rgba(0, 255, 159, 0.06) 0%, transparent 40%);
   animation: mesh-drift 20s ease-in-out infinite alternate;
-  filter: blur(60px);
+  filter: blur(40px);
+  will-change: transform, opacity;
 }
 
 @keyframes mesh-drift {
   0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(20px, -20px) scale(1.1) rotate(2deg); }
-  100% { transform: translate(-20px, 20px) scale(0.95) rotate(-2deg); }
+  50% { transform: translate(10px, -10px) scale(1.05) rotate(1deg); }
+  100% { transform: translate(-10px, 10px) scale(0.97) rotate(-1deg); }
 }
 
 [data-theme="light"] .hero-mesh {
@@ -460,36 +463,37 @@ body::before {
 .hero-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(140px);
+  filter: blur(100px);
   pointer-events: none;
   z-index: 0;
+  will-change: transform, opacity;
 }
 
 .hero-glow-1 {
-  width: 700px;
-  height: 700px;
-  top: -220px;
+  width: 500px;
+  height: 500px;
+  top: -120px;
   right: -80px;
-  background: rgba(124, 111, 247, 0.1);
+  background: rgba(124, 111, 247, 0.12);
   animation: glow-drift 14s ease-in-out infinite alternate;
 }
 
 .hero-glow-2 {
-  width: 600px;
-  height: 600px;
-  bottom: -180px;
-  left: -120px;
-  background: rgba(201, 169, 110, 0.07);
+  width: 450px;
+  height: 450px;
+  bottom: -100px;
+  left: -80px;
+  background: rgba(201, 169, 110, 0.1);
   animation: glow-drift 11s ease-in-out infinite alternate-reverse;
 }
 
 .hero-glow-3 {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(99, 102, 241, 0.06);
   animation: glow-pulse 8s ease-in-out infinite;
 }
 
@@ -503,12 +507,12 @@ body::before {
 
 @keyframes glow-drift {
   0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(40px, -30px) scale(1.12); }
+  100% { transform: translate(20px, -15px) scale(1.08); }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
 }
 
 .hero-content {
@@ -516,8 +520,9 @@ body::before {
   z-index: 2;
   text-align: center;
   max-width: 100%;
-  padding: 0 16px;
+  padding: 20px 16px 80px;
   width: 100%;
+  overflow: visible;
 }
 
 /* --- Hero Profile (avatar + badge row) --- */
@@ -645,7 +650,7 @@ body::before {
   line-height: 1.05;
   letter-spacing: -0.02em;
   margin-bottom: 24px;
-  padding: 0.05em 0;
+  padding: 0.15em 0.08em;
   background: linear-gradient(160deg, var(--text) 0%, rgba(255, 255, 255, 0.88) 40%, rgba(201, 169, 110, 0.75) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -654,6 +659,7 @@ body::before {
   position: relative;
   word-break: break-word;
   overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hero-name::after {
@@ -864,11 +870,12 @@ body::before {
 .scroll-indicator {
   position: absolute;
   bottom: 44px;
-  left: 50%;
+  left: calc(50% - 8px);
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   z-index: 2;
   cursor: pointer;
@@ -880,6 +887,9 @@ body::before {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-dim);
+  text-align: center;
+  white-space: nowrap;
+  min-width: 40px;
 }
 
 .scroll-arrow {
@@ -891,7 +901,7 @@ body::before {
 
 @keyframes scroll-bounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
+  50% { transform: translateY(6px); }
 }
 
 .scroll-line {
