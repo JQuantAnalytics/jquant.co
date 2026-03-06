@@ -141,35 +141,24 @@ a {
   background-size: 256px 256px;
 }
 
-/* --- Aurora background (global) --- */
-body::before {
-  content: '';
+/* --- Global Mesh Animation (follows mouse globally) --- */
+.global-mesh {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  opacity: 0.6;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124, 111, 247, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(201, 169, 110, 0.05) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 60% at 90% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 70% 50% at 10% 80%, rgba(20, 184, 166, 0.03) 0%, transparent 50%);
-  transition: opacity 0.4s;
-  animation: aurora-drift 40s ease-in-out infinite alternate;
+    radial-gradient(ellipse 45% 35% at 50% 50%, rgba(124, 111, 247, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 45% at 50% 50%, rgba(201, 169, 110, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse 25% 25% at 50% 50%, rgba(0, 255, 159, 0.06) 0%, transparent 40%);
+  filter: blur(40px);
   will-change: transform;
+  transition: transform 0.1s ease-out;
 }
 
-@keyframes aurora-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(1%, -0.5%) scale(1.01); }
-  100% { transform: translate(-1%, 0.5%) scale(0.99); }
-}
-
-[data-theme="light"] body::before {
-  background:
-    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124, 111, 247, 0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(201, 169, 110, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 60% at 90% 20%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse 70% 50% at 10% 80%, rgba(20, 184, 166, 0.03) 0%, transparent 50%);
+[data-theme="light"] .global-mesh {
+  opacity: 0.4;
 }
 
 /* --- Container --- */
@@ -421,45 +410,6 @@ body::before {
   -webkit-mask-image: radial-gradient(ellipse 85% 85% at center, black 20%, transparent 78%);
 }
 
-/* Mesh gradient animation layer */
-.hero-mesh {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.6;
-  background: 
-    radial-gradient(ellipse 45% 35% at 50% 30%, rgba(124, 111, 247, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse 35% 45% at 50% 65%, rgba(201, 169, 110, 0.14) 0%, transparent 50%),
-    radial-gradient(ellipse 25% 25% at 50% 50%, rgba(0, 255, 159, 0.06) 0%, transparent 40%);
-  animation: mesh-drift 20s ease-in-out infinite alternate;
-  filter: blur(40px);
-  will-change: transform, opacity;
-}
-
-@keyframes mesh-drift {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(10px, -10px) scale(1.05) rotate(1deg); }
-  100% { transform: translate(-10px, 10px) scale(0.97) rotate(-1deg); }
-}
-
-[data-theme="light"] .hero-mesh {
-  opacity: 0.4;
-}
-
-/* Large radial spotlight */
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 45%, rgba(124, 111, 247, 0.08) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-[data-theme="light"] .hero::after {
-  background: radial-gradient(ellipse 60% 70% at 50% 45%, rgba(124, 111, 247, 0.04) 0%, transparent 70%);
-}
-
 .hero-glow {
   position: absolute;
   border-radius: 50%;
@@ -475,7 +425,6 @@ body::before {
   top: -120px;
   right: -80px;
   background: rgba(124, 111, 247, 0.12);
-  animation: glow-drift 14s ease-in-out infinite alternate;
 }
 
 .hero-glow-2 {
@@ -484,7 +433,6 @@ body::before {
   bottom: -100px;
   left: -80px;
   background: rgba(201, 169, 110, 0.1);
-  animation: glow-drift 11s ease-in-out infinite alternate-reverse;
 }
 
 .hero-glow-3 {
@@ -494,7 +442,6 @@ body::before {
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(99, 102, 241, 0.06);
-  animation: glow-pulse 8s ease-in-out infinite;
 }
 
 [data-theme="light"] .hero-glow-1 {
@@ -503,16 +450,6 @@ body::before {
 
 [data-theme="light"] .hero-glow-2 {
   background: rgba(201, 169, 110, 0.05);
-}
-
-@keyframes glow-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(20px, -15px) scale(1.08); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
 }
 
 .hero-content {
@@ -543,6 +480,7 @@ body::before {
   box-shadow: 0 0 0 6px var(--avatar-ring-glow), 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
   position: relative;
+  backface-visibility: hidden;
 }
 
 .hero-avatar::after {
@@ -655,34 +593,9 @@ body::before {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  transition: text-shadow 0.4s var(--ease);
-  position: relative;
   word-break: break-word;
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
-}
-
-.hero-name::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: linear-gradient(160deg, var(--text) 0%, rgba(255, 255, 255, 0.88) 40%, rgba(201, 169, 110, 0.75) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: blur(30px);
-  opacity: 0;
-  transition: opacity 0.4s;
-  pointer-events: none;
-}
-
-.hero-name:hover::after {
-  opacity: 0.6;
-}
-
-.hero.scrolled .hero-name::after {
-  opacity: 0.5;
 }
 
 [data-theme="light"] .hero-name {
@@ -921,6 +834,8 @@ body::before {
   padding: 130px 0;
   position: relative;
   z-index: 1;
+  content-visibility: auto;
+  contain-intrinsic-size: 1300px;
 }
 
 .section-dark {
@@ -1019,6 +934,7 @@ body::before {
   flex-shrink: 0;
   transition: box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
   transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 .about-avatar:hover {
@@ -1241,6 +1157,8 @@ body::before {
   transition: all 0.4s var(--ease);
   overflow: hidden;
   position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .timeline-card::before {
@@ -1625,6 +1543,8 @@ body::before {
   overflow: hidden;
   transform-style: preserve-3d;
   perspective: 1000px;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .highlight-card::after {
@@ -1722,6 +1642,7 @@ body::before {
   letter-spacing: 0.01em;
   position: relative;
   overflow: hidden;
+  backface-visibility: hidden;
 }
 
 .skill-tag::before {
@@ -1939,14 +1860,7 @@ body::before {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
-  .hero-mesh,
-  .hero-glow-1,
-  .hero-glow-2,
-  .hero-glow-3 {
-    animation: none;
-  }
-  
+
   .scroll-arrow {
     animation: none;
   }
