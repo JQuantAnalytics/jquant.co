@@ -63,12 +63,6 @@
   function handleNavScroll() {
     const y = window.scrollY;
     nav.classList.toggle('scrolled', y > 50);
-    
-    // Add scrolled class to hero for neon glow effect
-    if (hero) {
-      hero.classList.toggle('scrolled', y > 100);
-    }
-    
     lastScroll = y;
     ticking = false;
   }
@@ -231,19 +225,33 @@
     }
   }
 
-  // --- Parallax glow on mouse move (hero only, desktop) ---
-  if (window.matchMedia('(min-width: 769px)').matches && !prefersReducedMotion) {
-    const glow1 = document.querySelector('.hero-glow-1');
-    const glow2 = document.querySelector('.hero-glow-2');
+  // --- Global Mesh Animation (follows mouse globally) ---
+  const globalMesh = document.getElementById('globalMesh');
+  if (globalMesh && !prefersReducedMotion) {
+    let meshX = 50;
+    let meshY = 50;
+    let targetX = 50;
+    let targetY = 50;
+    let meshTicking = false;
 
-    hero.addEventListener('mousemove', (e) => {
-      const rect = hero.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
+    function updateMeshPosition() {
+      // Smooth interpolation
+      meshX += (targetX - meshX) * 0.08;
+      meshY += (targetY - meshY) * 0.08;
 
-      if (glow1) glow1.style.transform = `translate(${x * 30}px, ${y * 20}px) scale(1.05)`;
-      if (glow2) glow2.style.transform = `translate(${x * -20}px, ${y * -15}px) scale(1.02)`;
-    });
+      globalMesh.style.backgroundPosition = `${meshX}% ${meshY}%`;
+      meshTicking = false;
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      targetX = (e.clientX / window.innerWidth) * 100;
+      targetY = (e.clientY / window.innerHeight) * 100;
+
+      if (!meshTicking) {
+        requestAnimationFrame(updateMeshPosition);
+        meshTicking = true;
+      }
+    }, { passive: true });
   }
 
   // --- Timeline accordion ---
@@ -322,21 +330,30 @@
     }
   }, { passive: true });
 
-  // --- 3D Tilt Effect on About Avatar ---
+  // --- 3D Tilt Effect on About Avatar (optimized with RAF) ---
   const aboutAvatar = document.getElementById('aboutAvatar');
   const aboutAvatarWrapper = document.getElementById('aboutAvatarWrapper');
 
-  if (aboutAvatar && aboutAvatarWrapper &&!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+  if (aboutAvatar && aboutAvatarWrapper && !prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+    let avatarTicking = false;
+
     aboutAvatarWrapper.addEventListener('mousemove', (e) => {
-      const rect = aboutAvatarWrapper.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      
-      const rotateX = y * -20;
-      const rotateY = x * 20;
-      
-      aboutAvatar.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-    });
+      if (avatarTicking) return;
+
+      requestAnimationFrame(() => {
+        const rect = aboutAvatarWrapper.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        const rotateX = y * -20;
+        const rotateY = x * 20;
+
+        aboutAvatar.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        avatarTicking = false;
+      });
+
+      avatarTicking = true;
+    }, { passive: true });
 
     aboutAvatarWrapper.addEventListener('mouseleave', () => {
       aboutAvatar.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
@@ -393,21 +410,30 @@
   addMagneticEffect('.btn-primary');
   addMagneticEffect('.contact-link');
 
-  // --- Card Tilt Effect for Highlight Cards ---
+  // --- Card Tilt Effect for Highlight Cards (optimized with RAF) ---
   const highlightCards = document.querySelectorAll('.highlight-card');
 
   if (!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
     highlightCards.forEach(card => {
+      let cardTicking = false;
+
       card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        
-        const rotateX = y * -8;
-        const rotateY = x * 8;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
-      });
+        if (cardTicking) return;
+
+        requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+          const rotateX = y * -8;
+          const rotateY = x * 8;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.02)`;
+          cardTicking = false;
+        });
+
+        cardTicking = true;
+      }, { passive: true });
 
       card.addEventListener('mouseleave', () => {
         card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
@@ -415,39 +441,47 @@
     });
   }
 
-  // --- Magnetic Repulsion for Skill Tags ---
+  // --- Magnetic Repulsion for Skill Tags (performance optimized) ---
   const skillsGrid = document.getElementById('skillsGrid');
 
-  if (skillsGrid &&!prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
+  if (skillsGrid && !prefersReducedMotion && window.matchMedia('(min-width: 769px)').matches) {
     const skillTags = skillsGrid.querySelectorAll('.skill-tag');
-    
+    let skillsTicking = false;
+
     skillsGrid.addEventListener('mousemove', (e) => {
+      if (skillsTicking) return;
+
       const gridRect = skillsGrid.getBoundingClientRect();
       const mouseX = e.clientX - gridRect.left;
       const mouseY = e.clientY - gridRect.top;
-      
-      skillTags.forEach(tag => {
-        const tagRect = tag.getBoundingClientRect();
-        const tagCenterX = tagRect.left + tagRect.width / 2 - gridRect.left;
-        const tagCenterY = tagRect.top + tagRect.height / 2 - gridRect.top;
-        
-        const distX = mouseX - tagCenterX;
-        const distY = mouseY - tagCenterY;
-        const dist = Math.sqrt(distX * distX + distY * distY);
-        
-        const maxDist = 100;
-        const force = Math.max(0, 1 - dist / maxDist);
-        
-        const moveX = -distX * force * 0.3;
-        const moveY = -distY * force * 0.3;
-        
-        if (dist < maxDist) {
-          tag.style.transform = `translate(${moveX}px, ${moveY}px) scale(${1 + force * 0.1})`;
-        } else {
-          tag.style.transform = 'translate(0, 0) scale(1)';
-        }
+
+      requestAnimationFrame(() => {
+        skillTags.forEach(tag => {
+          const tagRect = tag.getBoundingClientRect();
+          const tagCenterX = tagRect.left + tagRect.width / 2 - gridRect.left;
+          const tagCenterY = tagRect.top + tagRect.height / 2 - gridRect.top;
+
+          const distX = mouseX - tagCenterX;
+          const distY = mouseY - tagCenterY;
+          const dist = Math.sqrt(distX * distX + distY * distY);
+
+          const maxDist = 100;
+          const force = Math.max(0, 1 - dist / maxDist);
+
+          const moveX = -distX * force * 0.3;
+          const moveY = -distY * force * 0.3;
+
+          if (dist < maxDist) {
+            tag.style.transform = `translate(${moveX}px, ${moveY}px) scale(${1 + force * 0.1})`;
+          } else {
+            tag.style.transform = 'translate(0, 0) scale(1)';
+          }
+        });
+        skillsTicking = false;
       });
-    });
+
+      skillsTicking = true;
+    }, { passive: true });
 
     skillsGrid.addEventListener('mouseleave', () => {
       skillTags.forEach(tag => {
@@ -473,6 +507,7 @@
   // ============================================================
   // --- Interactive Canvas Grid ---
   // Lightweight dot-grid with mouse ripple + click explosion
+  // Performance optimized with RAF throttling
   // ============================================================
   (function initGrid() {
     const canvas = document.getElementById('heroCanvas');
@@ -481,6 +516,7 @@
     const ctx = canvas.getContext('2d');
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
+    // Optimized parameters for better performance
     const SPACING = isMobile ? 56 : 48;
     const DOT_RADIUS = 1;
     const RIPPLE_RADIUS = isMobile ? 80 : 110;
@@ -497,6 +533,8 @@
     let isDragging = false;
     let rafId = null;
     let heroRect;
+    let isVisible = true;
+    let needsDraw = false;
 
     function resize() {
       const heroParent = canvas.parentElement;
@@ -537,6 +575,12 @@
 
     function draw(ts) {
       rafId = requestAnimationFrame(draw);
+
+      // Skip rendering if not visible
+      if (!isVisible) {
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const colors = getThemeColors();
@@ -615,6 +659,15 @@
         y: clientY - heroRect.top,
       };
     }
+
+    // Visibility observer to pause canvas when not in view
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isVisible = entry.isIntersecting;
+      });
+    }, { threshold: 0.1 });
+
+    visibilityObserver.observe(canvas);
 
     // Only enable canvas interactions on desktop
     if (!prefersReducedMotion) {
