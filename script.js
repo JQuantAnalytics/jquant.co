@@ -58,6 +58,7 @@
   const nav = document.getElementById('nav');
   const hero = document.querySelector('.hero');
   let lastScroll = 0;
+  let ticking = false;
 
   function handleNavScroll() {
     const y = window.scrollY;
@@ -69,9 +70,15 @@
     }
     
     lastScroll = y;
+    ticking = false;
   }
 
-  window.addEventListener('scroll', handleNavScroll, { passive: true });
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(handleNavScroll);
+      ticking = true;
+    }
+  }, { passive: true });
   handleNavScroll();
 
   // --- Mobile menu toggle ---
@@ -287,6 +294,7 @@
   // --- Active nav link highlighting ---
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
+  let navHighlightingTicking = false;
 
   function highlightNav() {
     const scrollY = window.scrollY + 120;
@@ -304,9 +312,15 @@
         });
       }
     });
+    navHighlightingTicking = false;
   }
 
-  window.addEventListener('scroll', highlightNav, { passive: true });
+  window.addEventListener('scroll', () => {
+    if (!navHighlightingTicking) {
+      requestAnimationFrame(highlightNav);
+      navHighlightingTicking = true;
+    }
+  }, { passive: true });
 
   // --- 3D Tilt Effect on About Avatar ---
   const aboutAvatar = document.getElementById('aboutAvatar');
@@ -467,15 +481,15 @@
     const ctx = canvas.getContext('2d');
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-    const SPACING = isMobile ? 48 : 40;
+    const SPACING = isMobile ? 56 : 48;
     const DOT_RADIUS = 1;
-    const RIPPLE_RADIUS = isMobile ? 90 : 130;
-    const RIPPLE_STRENGTH = isMobile ? 6 : 10;
-    const EXPLODE_RADIUS = isMobile ? 110 : 160;
-    const EXPLODE_STRENGTH = isMobile ? 22 : 36;
-    const EXPLODE_DURATION = 600;
-    const DRAG_RADIUS = isMobile ? 70 : 100;
-    const DRAG_STRENGTH = isMobile ? 9 : 14;
+    const RIPPLE_RADIUS = isMobile ? 80 : 110;
+    const RIPPLE_STRENGTH = isMobile ? 4 : 7;
+    const EXPLODE_RADIUS = isMobile ? 90 : 140;
+    const EXPLODE_STRENGTH = isMobile ? 16 : 28;
+    const EXPLODE_DURATION = 500;
+    const DRAG_RADIUS = isMobile ? 60 : 85;
+    const DRAG_STRENGTH = isMobile ? 6 : 10;
 
     let cols, rows, dots;
     let mouse = { x: -9999, y: -9999 };
