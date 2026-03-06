@@ -107,8 +107,8 @@
 
   // --- Typewriter Effect ---
   const typewriterEl = document.getElementById('typewriter');
-  const typewriterText = 'Building at the intersection of blockchain ecosystems, institutional strategy, and emerging digital infrastructure — from pre-launch to $70B+ market cap.';
-  
+  const typewriterText = 'Building at the intersection of blockchain ecosystems, institutional strategy, and emerging digital infrastructure — scaling protocols from pre-launch to $70B+ market cap.';
+
   if (typewriterEl && !prefersReducedMotion) {
     let charIndex = 0;
     let isTyping = false;
@@ -118,7 +118,7 @@
       if (charIndex < typewriterText.length) {
         typewriterEl.textContent += typewriterText.charAt(charIndex);
         charIndex++;
-        setTimeout(typeWriter, 20 + Math.random() * 20);
+        setTimeout(typeWriter, 25 + Math.random() * 15);
       } else {
         isTyping = false;
       }
