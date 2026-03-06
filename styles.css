@@ -403,7 +403,7 @@ body::before {
   align-items: center;
   justify-content: center;
   padding: 140px 28px 100px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Canvas replaces the CSS dot grid */
@@ -514,7 +514,8 @@ body::before {
   position: relative;
   z-index: 2;
   text-align: center;
-  max-width: 860px;
+  max-width: 960px;
+  padding: 0 20px;
 }
 
 /* --- Hero Profile (avatar + badge row) --- */
@@ -618,9 +619,10 @@ body::before {
   font-family: var(--serif);
   font-size: clamp(80px, 15vw, 160px);
   font-weight: 700;
-  line-height: 0.85;
+  line-height: 0.95;
   letter-spacing: -0.03em;
   margin-bottom: 24px;
+  padding: 0.1em 0;
   background: linear-gradient(160deg, var(--text) 0%, rgba(255, 255, 255, 0.88) 40%, rgba(201, 169, 110, 0.75) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -1829,7 +1831,7 @@ body::before {
 @media (min-width: 1400px) {
   .hero-name {
     white-space: nowrap;
-    line-height: 1;
+    line-height: 0.95;
   }
 }
 
