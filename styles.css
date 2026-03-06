@@ -173,9 +173,10 @@ body::before {
 
 /* --- Container --- */
 .container {
-  max-width: 1140px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 0 24px;
+  width: 100%;
 }
 
 /* --- Navigation --- */
@@ -402,8 +403,8 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 140px 28px 100px;
-  overflow: visible;
+  padding: 140px 24px 100px;
+  overflow: hidden;
 }
 
 /* Canvas replaces the CSS dot grid */
@@ -514,8 +515,9 @@ body::before {
   position: relative;
   z-index: 2;
   text-align: center;
-  max-width: 960px;
-  padding: 0 20px;
+  max-width: 100%;
+  padding: 0 16px;
+  width: 100%;
 }
 
 /* --- Hero Profile (avatar + badge row) --- */
@@ -535,12 +537,33 @@ body::before {
   border: 2px solid var(--avatar-ring);
   box-shadow: 0 0 0 6px var(--avatar-ring-glow), 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
+  position: relative;
+}
+
+.hero-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--gold), var(--violet), var(--gold));
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  z-index: -1;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .hero-avatar:hover {
   transform: scale(1.05);
   border-color: var(--gold);
   box-shadow: 0 0 0 8px var(--gold-dim), 0 12px 40px rgba(201, 169, 110, 0.2);
+}
+
+.hero-avatar:hover::after {
+  opacity: 1;
 }
 
 /* --- Hero Badge with Magnetic Effect --- */
@@ -617,18 +640,20 @@ body::before {
 /* --- Hero Name - Oversized with Neon Glow --- */
 .hero-name {
   font-family: var(--serif);
-  font-size: clamp(80px, 15vw, 160px);
+  font-size: clamp(56px, 11.5vw, 140px);
   font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   margin-bottom: 24px;
-  padding: 0.1em 0;
+  padding: 0.05em 0;
   background: linear-gradient(160deg, var(--text) 0%, rgba(255, 255, 255, 0.88) 40%, rgba(201, 169, 110, 0.75) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: text-shadow 0.4s var(--ease);
   position: relative;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .hero-name::after {
@@ -644,6 +669,10 @@ body::before {
   opacity: 0;
   transition: opacity 0.4s;
   pointer-events: none;
+}
+
+.hero-name:hover::after {
+  opacity: 0.6;
 }
 
 .hero.scrolled .hero-name::after {
@@ -748,12 +777,29 @@ body::before {
 .btn-primary {
   background: var(--gradient);
   color: #0d0a05;
-  box-shadow: 0 4px 24px rgba(201, 169, 110, 0.25), 0 1px 0 rgba(255, 255, 255, 0.15) inset;
+  box-shadow: 0 4px 24px rgba(201, 169, 110, 0.25), 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s var(--ease);
+}
+
+.btn-primary:hover::after {
+  left: 100%;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 40px rgba(201, 169, 110, 0.35), 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 0 20px rgba(201, 169, 110, 0.3);
+  box-shadow: 0 8px 40px rgba(201, 169, 110, 0.35), 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 0 20px rgba(201, 169, 110, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
 
 .btn-ghost {
@@ -789,6 +835,17 @@ body::before {
   color: var(--text-muted);
   transition: all 0.35s var(--spring);
   backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-socials a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(201, 169, 110, 0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s;
 }
 
 .hero-socials a:hover {
@@ -796,7 +853,11 @@ body::before {
   border-color: var(--border-gold);
   background: var(--gold-dim);
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 8px 20px rgba(201, 169, 110, 0.12);
+  box-shadow: 0 8px 20px rgba(201, 169, 110, 0.12), 0 0 30px rgba(201, 169, 110, 0.2);
+}
+
+.hero-socials a:hover::before {
+  opacity: 1;
 }
 
 /* --- Scroll Indicator with Animated Arrow --- */
@@ -1018,6 +1079,8 @@ body::before {
   background: radial-gradient(circle at 50% 0%, rgba(201, 169, 110, 0.08) 0%, transparent 50%);
   opacity: 0;
   transition: opacity 0.4s;
+  border-radius: 18px;
+  pointer-events: none;
 }
 
 .stat-card:hover {
@@ -1183,6 +1246,16 @@ body::before {
   border-radius: 2px 0 0 2px;
 }
 
+.timeline-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 0% 50%, rgba(201, 169, 110, 0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+
 .timeline-card:hover,
 .timeline-card:has(.timeline-toggle[aria-expanded="true"]) {
   background: var(--bg-card-hover);
@@ -1192,7 +1265,9 @@ body::before {
 }
 
 .timeline-card:hover::before,
-.timeline-card:has(.timeline-toggle[aria-expanded="true"])::before {
+.timeline-card:has(.timeline-toggle[aria-expanded="true"])::before,
+.timeline-card:hover::after,
+.timeline-card:has(.timeline-toggle[aria-expanded="true"])::after {
   opacity: 1;
 }
 
@@ -1552,13 +1627,29 @@ body::before {
   transition: opacity 0.45s;
 }
 
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--gold) 0%, transparent 50%, var(--violet) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.45s;
+}
+
 .highlight-card:hover {
   border-color: var(--border-gold);
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(201, 169, 110, 0.07), 0 0 40px rgba(201, 169, 110, 0.1);
 }
 
-.highlight-card:hover::after {
+.highlight-card:hover::after,
+.highlight-card:hover::before {
   opacity: 1;
 }
 
@@ -1620,6 +1711,16 @@ body::before {
   cursor: default;
   letter-spacing: 0.01em;
   position: relative;
+  overflow: hidden;
+}
+
+.skill-tag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(201, 169, 110, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s;
 }
 
 .skill-tag:hover {
@@ -1628,6 +1729,10 @@ body::before {
   background: var(--gold-dim);
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 20px rgba(201, 169, 110, 0.12), 0 0 15px rgba(201, 169, 110, 0.08);
+}
+
+.skill-tag:hover::before {
+  opacity: 1;
 }
 
 /* --- Contact --- */
@@ -1723,7 +1828,17 @@ body::before {
   transition: opacity 0.3s;
 }
 
-.contact-link:hover::before {
+.contact-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201, 169, 110, 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.contact-link:hover::before,
+.contact-link:hover::after {
   opacity: 1;
 }
 
@@ -1732,7 +1847,7 @@ body::before {
   border-color: var(--border-gold);
   background: var(--gold-dim);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(201, 169, 110, 0.12), 0 0 20px rgba(201, 169, 110, 0.1);
+  box-shadow: 0 12px 32px rgba(201, 169, 110, 0.12), 0 0 20px rgba(201, 169, 110, 0.1), 0 0 0 1px rgba(201, 169, 110, 0.1);
 }
 
 .contact-link svg {
@@ -1863,11 +1978,15 @@ body::before {
   }
 
   .hero {
-    padding: 110px 20px 80px;
+    padding: 110px 16px 80px;
   }
 
   .hero-name {
-    font-size: 60px;
+    font-size: clamp(48px, 10vw, 60px);
+  }
+
+  .hero-content {
+    padding: 0 8px;
   }
 
   .section {
@@ -1972,8 +2091,20 @@ body::before {
 }
 
 @media (max-width: 480px) {
+  .hero {
+    padding: 100px 12px 70px;
+  }
+
   .hero-name {
-    font-size: 52px;
+    font-size: clamp(40px, 9vw, 52px);
+  }
+
+  .hero-content {
+    padding: 0 4px;
+  }
+
+  .container {
+    padding: 0 16px;
   }
 
   .hero-cta {
