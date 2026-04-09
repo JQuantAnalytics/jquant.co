@@ -2,4 +2,3 @@
 Thumbs.db
 *.log
 .playwright-cli/
-*.png
